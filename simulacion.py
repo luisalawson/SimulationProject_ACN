@@ -3,6 +3,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
+random.seed(48279282)
 
 pygame.init()
 
@@ -103,21 +104,34 @@ class Transito:
         diaElegido = random.choices(dias, weights=probabilidades)[0]
         return diaElegido
     
-    def horaDelDia(self, dia):
+    def horaDelDia(self):
+        # #Si es Domingo
+        # if dia == 7:
+        #     hora = np.random.normal(13, 2)
         
-         #Si es Domingo
-        if dia == 7:
-            hora = np.random.normal(13, 2)
+        # #Si es Sabado
+        # elif dia == 6: 
+        #     hora = np.random.normal(13, 4)
         
-        #Si es Sabado
-        elif dia == 6: 
-            hora = np.random.normal(13, 4)
-        
-        #Si es un dia de semana
-        else:
-            hora = np.random.normal(9, 2)
+        # #Si es un dia de semana
+        # else:
+        #     hora = np.random.normal(9, 2)
             
-        return hora
+        # return hora
+        horas = random.randint(0,24)
+        if self.diaSemana_=="Lunes" or self.diaSemana_=="Martes" or self.diaSemana_=="Miercoles"or self.diaSemana_=="Jueves" or self.diaSemana_=="Viernes":
+            probabilidades = [0.03,0.03,0.03,0.03,0.03,0.03,0.03,0.05,0.09,0.1,0.08,0.05,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03]
+            horaElegida = random.choices(horas, weights=probabilidades)[0]
+        elif self.diaSemana_=="Sabado":
+            probabilidades = [0.03,0.03,0.03,0.03,0.03,0.03,0.03,0.04,0.04,0.04,0.04,0.05,0.06,0.06,0.06,0.05,0.05,0.05,0.04,0.04,0.05,0.05,0.04,0.03]
+            horaElegida = random.choices(horas, weights=probabilidades)[0]
+        elif self.diaSemana_=="Domingo":
+            probabilidades = [0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.05,0.06,0.05,0.04,0.05,0.05,0.05,0.05,0.04,0.04,0.04,0.04]
+            horaElegida = random.choices(horas, weights=probabilidades)[0]
+        else:
+            raise ValueError("Día no válido")
+        return horaElegida
+    
    
     def congestionHoraDia(self, hora, dia):
         #dado un dia y una hora, calcula la congestion que habra
