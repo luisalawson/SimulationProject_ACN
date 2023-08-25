@@ -94,8 +94,8 @@ class Transito:
         pygame.display.set_caption("Highway Simulation")
         self.clock = pygame.time.Clock()
         self.all_sprites = pygame.sprite.Group()
-        self.diaSemana_ = self.diaSemana()
-        self.horaDelDia_ = self.horaDelDia()
+        self.diaSemana_  = self.diaSemana()
+        self.horaDelDia_ = self.horaDelDia(self.diaSemana_)
         self.autosEnTramo = []
 
     def diaSemana(self):
@@ -104,7 +104,7 @@ class Transito:
         diaElegido = random.choices(dias, weights=probabilidades)[0]
         return diaElegido
     
-    def horaDelDia(self):
+    def horaDelDia(self, dia):
         # #Si es Domingo
         # if dia == 7:
         #     hora = np.random.normal(13, 2)
@@ -118,18 +118,28 @@ class Transito:
         #     hora = np.random.normal(9, 2)
             
         # return hora
+        
         horas = random.randint(0,24)
-        if self.diaSemana_=="Lunes" or self.diaSemana_=="Martes" or self.diaSemana_=="Miercoles"or self.diaSemana_=="Jueves" or self.diaSemana_=="Viernes":
+        
+        #Si es un dia de semana
+        if dia =="Lunes" or dia =="Martes" or dia =="Miercoles"or dia =="Jueves" or dia =="Viernes":
             probabilidades = [0.03,0.03,0.03,0.03,0.03,0.03,0.03,0.05,0.09,0.1,0.08,0.05,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03]
             horaElegida = random.choices(horas, weights=probabilidades)[0]
-        elif self.diaSemana_=="Sabado":
+        
+        #Si es Sabado
+        elif dia =="Sabado":
             probabilidades = [0.03,0.03,0.03,0.03,0.03,0.03,0.03,0.04,0.04,0.04,0.04,0.05,0.06,0.06,0.06,0.05,0.05,0.05,0.04,0.04,0.05,0.05,0.04,0.03]
             horaElegida = random.choices(horas, weights=probabilidades)[0]
-        elif self.diaSemana_=="Domingo":
+        
+        #Si es Domingo 
+        elif dia =="Domingo":
             probabilidades = [0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.05,0.06,0.05,0.04,0.05,0.05,0.05,0.05,0.04,0.04,0.04,0.04]
             horaElegida = random.choices(horas, weights=probabilidades)[0]
+        
+        #Si no es ninguno de los anteriores 
         else:
             raise ValueError("Día no válido")
+        
         return horaElegida
     
    
