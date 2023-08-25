@@ -14,11 +14,17 @@ WHITE = (255, 255, 255)
 
 # Genero la clase auto
 class Auto(pygame.sprite.Sprite):
+    
     def __init__(self, posicion, color):
+        
         super().__init__()
         
+        self.tipoDeVehiculo_ = self.tipoDeVehiculo()
+        self.personalidadConductor_ = self.personalidadConductor()
+        
         #la imagen del auto para la vis
-        self.dimensiones
+        self.dimensiones = self.dimensiones(self.tipoDeVehiculo_)
+        
         self.image = pygame.Surface(self.dimensiones)
         self.image.fill(color)
 
@@ -27,8 +33,6 @@ class Auto(pygame.sprite.Sprite):
         #la posicion inicial y la velocidad
         self.rect.x = posicion
         self.speed = velocidad
-        self.tipoDeVehiculo_
-        self.personalidadConductor_
 
     
     def eleccionVelocidad(self, congestion, tipoDeVehiculo):
@@ -38,18 +42,27 @@ class Auto(pygame.sprite.Sprite):
         # concentrada sobre valores mas cercanos a la velocidad maxima
         ...
     
-    def tipoDeVehiculo(self):
-        #elige camion o auto, cambia la velocidad
-        #va a elegir auto con mas probabilidad que camion
+    def tipoDeVehiculo(cls):
+        
+        #si es auto --> 60% de probabilidad
+        #si es camion --> 10% de probabilidad
+        #si es moto --> 30% de probabilidad
+        
         probabilidades = [0.6, 0.1, 0.3]
-        valores = ["auto","camion","moto"]
-        self.tipoDeVehiculo_ = random.choices(valores,weights=probabilidades)
-        if self.tipoDeVehiculo_ == "auto":
-            self.dimensiones = (40,20)
-        elif self.tipoDeVehiculo_ == "camion":
-            self.dimensiones = (40,30)
-        elif self.tipoDeVehiculo_ == "moto":
-            self.dimensiones = (40,10)
+        valores = ["auto", "camion", "moto"]
+        return random.choices(valores, weights=probabilidades)[0]
+    
+    def dimensiones(cls, tipoDeVehiculo):
+        
+        if tipoDeVehiculo == "auto":
+            return (40, 20)
+        elif tipoDeVehiculo == "camion":
+            return (40, 30)
+        elif tipoDeVehiculo == "moto":
+            return (40, 10)
+        else:
+            raise ValueError("Tipo de vehiculo no valido")
+    
     
     def personalidadConductor(self):
         #si es agresivo --> la velocidad elegida siempre es la maxima o mas
@@ -121,7 +134,7 @@ for _ in range(n):
     velocidad = random.randint(1, 5) # velocidad random -- CAMBIAR A DISTRIBUCION
     posicion = 0  # los autos entran desde la ubicacion inicial, entonces es 0 siempre
     color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))  # color random para diferenciar los autos
-    auto = Auto(velocidad, posicion, color) # ahora con eso creo mi auto
+    auto = Auto(posicion, color) # ahora con eso creo mi auto
     autos.append(auto) # inserto el auto en el plano que cree
     all_sprites.add(auto) # lo agrego a mi visualizacion
 
