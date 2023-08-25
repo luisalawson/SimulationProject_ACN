@@ -1,6 +1,7 @@
 import pygame
 import random
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 pygame.init()
@@ -87,38 +88,43 @@ class Auto(pygame.sprite.Sprite):
 
 class Transito:
     
-    def __init__(self):
+    def _init_(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Highway Simulation")
         self.clock = pygame.time.Clock()
         self.all_sprites = pygame.sprite.Group()
+        self.diaSemana_ = self.diaSemana()
+        self.horaDelDia_ = self.horaDelDia()
         self.autosEnTramo = []
 
-    def diaSemana(n):
-        dias = []
-        for i in range(0,n):
-            #elijo usar una uniforme porque la semana se distribuye asi
-            # 1 -- Lunes, 2 -- Martes, 3 -- Miercoles, ... , 7 -- Domingo
-            diaElegido = random.uniform(1, 7)
-            dias.append(diaElegido)
-        return dias
+    def diaSemana(self):
+        dias = ['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo']
+        probabilidades = [0.14,0.15,0.16,0.16,0.15,0.13,0.11]
+        diaElegido = random.choices(dias, weights=probabilidades)[0]
+        return diaElegido
     
-    def horaDelDia(self,n):
-        horas = []
-        for i in range(0,n):
-            #elijo usar una uniforme porque el dia se distribuye asi
-            # 0 -- 00:00, 1 -- 01:00, 2 -- 02:00, ... , 23 -- 23:00
-            horaElegida = random.uniform(0, 23)
-            horas.append(horaElegida)
-        return horas
-    
+    def horaDelDia(self, dia):
+        
+         #Si es Domingo
+        if dia == 7:
+            hora = np.random.normal(13, 2)
+        
+        #Si es Sabado
+        elif dia == 6: 
+            hora = np.random.normal(13, 4)
+        
+        #Si es un dia de semana
+        else:
+            hora = np.random.normal(9, 2)
+            
+        return hora
+   
     def congestionHoraDia(self, hora, dia):
         #dado un dia y una hora, calcula la congestion que habra
         #esto me va a servir para saber cuantos autos mandar
         #en horarios donde hay mayor congestion, habran mas autos
-        ...
-
-
+        return
+    
 # Pygame setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Highway Simulation")
