@@ -27,10 +27,45 @@ class Auto(pygame.sprite.Sprite):
 
         #el auto se va moviendo, entonces lo debo ir actualizando
     
+    def eleccionVelocidad(self, congestion, tipoDeVehiculo):
+        # si la congestion es alta, la velocidad va a estar 
+        # concentrada en valores bajos
+        # si la congestion es baja, la velocidad va a estar 
+        # concentrada sobre valores mas cercanos a la velocidad maxima
+        ...
+    
+    def tipoDeVehiculo(self):
+        #elige camion o auto, cambia la velocidad
+        #va a elegir auto con mas probabilidad que camion
+        ...
+    
+    def personalidadConductor(self):
+        #si es agresivo --> la velocidad elegida siempre es la maxima o mas
+        #               --> deja poco espacio con el de adelante
+        # si es moderado --> la velocidad elegida siempre es un poco debajo de la maxima
+        #               --> deja moderado espacio con el de adelante
+        # si es lento --> la velocidad elegida siempre es un por debajo de la maxima
+        #               --> deja mucho espacio con el de adelante
+
+        probabilidades = [0.2,0.7, 0.1]
+        valores = ['agresivo','moderado','lento']
+        return random.choices(valores,weights=probabilidades)
+
+    
     def actualizar(self):
         #self.rect.x es la posicion
         self.rect.x += self.speed
     
+
+
+class Transito:
+    def __init__(self):
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        pygame.display.set_caption("Highway Simulation")
+        self.clock = pygame.time.Clock()
+        self.all_sprites = pygame.sprite.Group()
+        self.cars = []
+
     def diaSemana(n):
         dias = []
         for i in range(0,n):
@@ -55,17 +90,7 @@ class Auto(pygame.sprite.Sprite):
         #en horarios donde hay mayor congestion, habran mas autos
         ...
 
-    def eleccionVelocidad(self, congestion, tipoDeVehiculo):
-        # si la congestion es alta, la velocidad va a estar 
-        # concentrada en valores bajos
-        # si la congestion es baja, la velocidad va a estar 
-        # concentrada sobre valores mas cercanos a la velocidad maxima
-        ...
-    
-    def tipoDeVehiculo(self):
-        #elige camion o auto, cambia la velocidad
-        #va a elegir auto con mas probabilidad que camion
-        ...
+
 
 
 
