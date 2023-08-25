@@ -14,10 +14,12 @@ WHITE = (255, 255, 255)
 
 # Genero la clase auto
 class Auto(pygame.sprite.Sprite):
-    def __init__(self, velocidad, posicion, color):
+    def __init__(self, posicion, color):
         super().__init__()
+        
         #la imagen del auto para la vis
-        self.image = pygame.Surface((40, 20))
+        self.dimensiones
+        self.image = pygame.Surface(self.dimensiones)
         self.image.fill(color)
 
         self.rect = self.image.get_rect()
@@ -25,8 +27,9 @@ class Auto(pygame.sprite.Sprite):
         #la posicion inicial y la velocidad
         self.rect.x = posicion
         self.speed = velocidad
+        self.tipoDeVehiculo_
+        self.personalidadConductor_
 
-        #el auto se va moviendo, entonces lo debo ir actualizando
     
     def eleccionVelocidad(self, congestion, tipoDeVehiculo):
         # si la congestion es alta, la velocidad va a estar 
@@ -38,7 +41,15 @@ class Auto(pygame.sprite.Sprite):
     def tipoDeVehiculo(self):
         #elige camion o auto, cambia la velocidad
         #va a elegir auto con mas probabilidad que camion
-        ...
+        probabilidades = [0.6, 0.1, 0.3]
+        valores = ["auto","camion","moto"]
+        self.tipoDeVehiculo_ = random.choices(valores,weights=probabilidades)
+        if self.tipoDeVehiculo_ == "auto":
+            self.dimensiones = (40,20)
+        elif self.tipoDeVehiculo_ == "camion":
+            self.dimensiones = (40,30)
+        elif self.tipoDeVehiculo_ == "moto":
+            self.dimensiones = (40,10)
     
     def personalidadConductor(self):
         #si es agresivo --> la velocidad elegida siempre es la maxima o mas
@@ -48,24 +59,27 @@ class Auto(pygame.sprite.Sprite):
         # si es lento --> la velocidad elegida siempre es un por debajo de la maxima
         #               --> deja mucho espacio con el de adelante
 
-        probabilidades = [0.2,0.7, 0.1]
+        probabilidades = [0.2, 0.7, 0.1]
         valores = ['agresivo','moderado','lento']
-        return random.choices(valores,weights=probabilidades)
+        self.personalidadConductor_ = random.choices(valores,weights=probabilidades)
+           
 
-    
+    def velocidad(self):
+        ...
+
     def actualizar(self):
-        #self.rect.x es la posicion
+        #deberia tomar en cuenta la aceleracion + la velocidad + la posicion
         self.rect.x += self.speed
-    
 
 
 class Transito:
+    
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Highway Simulation")
         self.clock = pygame.time.Clock()
         self.all_sprites = pygame.sprite.Group()
-        self.cars = []
+        self.autosEnTramo = []
 
     def diaSemana(n):
         dias = []
@@ -90,10 +104,6 @@ class Transito:
         #esto me va a servir para saber cuantos autos mandar
         #en horarios donde hay mayor congestion, habran mas autos
         ...
-
-
-
-
 
 
 # Pygame setup
