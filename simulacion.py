@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 
 pygame.init()
 
-SCREEN_WIDTH = 800
+# 17 km
+SCREEN_WIDTH = 1700
 SCREEN_HEIGHT = 200
 
 # Color del fondo
