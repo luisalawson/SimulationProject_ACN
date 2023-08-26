@@ -35,16 +35,35 @@ class Auto(pygame.sprite.Sprite):
         #la posicion inicial y la velocidad
         self.rect.x = posicion
         self.speed = velocidad
-
     
-    def eleccionVelocidad(self, congestion, tipoDeVehiculo):
+    def eleccionVelocidad(self, tipoDeConductor, hora):
         # si la congestion es alta, la velocidad va a estar 
         # concentrada en valores bajos
         # si la congestion es baja, la velocidad va a estar 
         # concentrada sobre valores mas cercanos a la velocidad maxima
-        ...
+        velocidadElegida=0
+        if hora == "Baja":
+            velocidadElegida += np.random.normal(78.26,1)
+        elif hora == "Moderada":
+            velocidadElegida += np.random.normal(69.06,2)
+        elif hora == "Critica":
+            velocidadElegida += np.random.normal(54.97,5)
+        elif hora == "Pico":
+            velocidadElegida += np.random.normal(39.30,3)
+        else:
+            raise ValueError("Hora no válida")
+        
+        if tipoDeConductor == "Agresivo":
+            velocidadElegida += random.uniform(5,10)
+        elif tipoDeConductor == "Moderado":
+            velocidadElegida += random.uniform(-2,5)
+        elif tipoDeConductor == "Lento":
+            velocidadElegida += random.uniform(-10,-5)
+        else:
+            raise ValueError("Tipo de conductor no válido")
+        return velocidadElegida
     
-    def tipoDeVehiculo(cls):
+    def tipoDeVehiculo(self):
         
         #si es auto --> 60% de probabilidad
         #si es camion --> 10% de probabilidad
@@ -54,7 +73,7 @@ class Auto(pygame.sprite.Sprite):
         valores = ["auto", "camion", "moto"]
         return random.choices(valores, weights=probabilidades)[0]
     
-    def dimensiones(cls, tipoDeVehiculo):
+    def dimensiones(self, tipoDeVehiculo):
         
         if tipoDeVehiculo == "auto":
             return (40, 20)
@@ -64,6 +83,7 @@ class Auto(pygame.sprite.Sprite):
             return (40, 10)
         else:
             raise ValueError("Tipo de vehiculo no valido")
+    
     
     
     def personalidadConductor(self):
@@ -79,9 +99,6 @@ class Auto(pygame.sprite.Sprite):
         self.personalidadConductor_ = random.choices(valores,weights=probabilidades)
            
 
-    def velocidad(self):
-        ...
-
     def actualizar(self):
         #deberia tomar en cuenta la aceleracion + la velocidad + la posicion
         self.rect.x += self.speed
@@ -94,8 +111,8 @@ class Transito:
         pygame.display.set_caption("Highway Simulation")
         self.clock = pygame.time.Clock()
         self.all_sprites = pygame.sprite.Group()
-        self.diaSemana_  = self.diaSemana()
-        self.horaDelDia_ = self.horaDelDia(self.diaSemana_)
+        self.diaSemana_ = self.diaSemana()
+        self.horaDelDia_ = self.horaDelDia()
         self.autosEnTramo = []
 
     def diaSemana(self):
@@ -104,42 +121,25 @@ class Transito:
         diaElegido = random.choices(dias, weights=probabilidades)[0]
         return diaElegido
     
-    def horaDelDia(self, dia):
-        # #Si es Domingo
-        # if dia == 7:
-        #     hora = np.random.normal(13, 2)
-        
-        # #Si es Sabado
-        # elif dia == 6: 
-        #     hora = np.random.normal(13, 4)
-        
-        # #Si es un dia de semana
-        # else:
-        #     hora = np.random.normal(9, 2)
-            
-        # return hora
-        
+    def horaDelDia(self):
         horas = random.randint(0,24)
-        
-        #Si es un dia de semana
-        if dia =="Lunes" or dia =="Martes" or dia =="Miercoles"or dia =="Jueves" or dia =="Viernes":
-            probabilidades = [0.03,0.03,0.03,0.03,0.03,0.03,0.03,0.05,0.09,0.1,0.08,0.05,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.03,0.03,0.03,0.03]
-            horaElegida = random.choices(horas, weights=probabilidades)[0]
-        
-        #Si es Sabado
-        elif dia =="Sabado":
-            probabilidades = [0.03,0.03,0.03,0.03,0.03,0.03,0.03,0.04,0.04,0.04,0.04,0.05,0.06,0.06,0.06,0.05,0.05,0.05,0.04,0.04,0.05,0.05,0.04,0.03]
-            horaElegida = random.choices(horas, weights=probabilidades)[0]
-        
-        #Si es Domingo 
-        elif dia =="Domingo":
-            probabilidades = [0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.04,0.05,0.06,0.05,0.04,0.05,0.05,0.05,0.05,0.04,0.04,0.04,0.04]
-            horaElegida = random.choices(horas, weights=probabilidades)[0]
-        
-        #Si no es ninguno de los anteriores 
+        if self.diaSemana_=="Lunes" or self.diaSemana_=="Martes" or self.diaSemana_=="Miercoles"or self.diaSemana_=="Jueves" or self.diaSemana_=="Viernes":
+            muestrasUno = np.random.normal(9,3,10000)
+            muestrasDos = np.random.normal(18,4,10000)
+            muestrasHoras = np.concatenate((muestrasUno,muestrasDos))
+            horaElegida = random.choices(muestrasHoras)
+        elif self.diaSemana_=="Sabado":
+            muestrasUno = np.random.normal(13,3, 10000)
+            muestrasDos = np.random.normal(20,1,10000)
+            muestrasHoras = np.concatenate((muestrasUno,muestrasDos))
+            horaElegida = random.choices(muestrasHoras)
+        elif self.diaSemana_=="Domingo":
+            muestrasUno = np.random.normal(13,2,10000)
+            muestrasDos = np.random.normal(18,3,10000)
+            muestrasHoras = np.concatenate((muestrasUno,muestrasDos))
+            horaElegida = random.choices(muestrasHoras)
         else:
             raise ValueError("Día no válido")
-        
         return horaElegida
     
    
@@ -194,4 +194,5 @@ while running:
     clock.tick(60)  # Limit to 60 frames per second
 
 pygame.quit()
+
 
