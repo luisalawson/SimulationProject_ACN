@@ -27,7 +27,7 @@ class Auto(pygame.sprite.Sprite):
         self.personalidadConductor_ = self.personalidadConductor()
         
         #Imagen del auto para la visualizacion y su color
-        self.image = pygame.Surface((40, 20))
+        self.image = pygame.Surface((10, 20))
         self.image.fill(color)
 
         #Posicion inicial y velocidad dependiendo del dia y la hora
@@ -162,48 +162,77 @@ class Autopista:
         self.diaSemana_ = self.diaSemana()
         self.horaDelDia_ = self.horaDelDia()
         
-        # Creamos la cantidad de autos en el tramo vacia
-        self.autosEnTramo = []
+        # Creamos variable para almacenar la cantidad de autos en el tramo
+        # En una autopista de 17 km, la cantidad de autos va desde 0 a 3000
+        # Cuando la cantidad de autos es baja, hay poco transito.
+        # Cuando la cantidad de autos es alta, hay mucho transito.
+        # Esto va a depender de el dia y la hora.
+    
+        self._cantidadAutos = self.cantidadAutos(self.diaSemana_, self.horaDelDia_)
+        self._autosEnTramo = []
 
     # Definimos el dia de la semana
     def diaSemana(self):
         
         # Definimos los dias de la semana y sus probabilidades
         dias = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
-        probabilidades = [0.14, 0.15, 0.16, 0.16, 0.15, 0.13, 0.11]
         
-        # Elegimos un dia al azar
-        diaElegido = random.choices(dias, weights=probabilidades)[0]
+        #Elegimos un dia al azar
+        diaElegido = random.choices(dias)[0]
         
         return diaElegido
 
     # Definimos la hora del dia
     def horaDelDia(self):
         
-        if self.diaSemana_ in ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes']:
+        # Elegimos una hora al azar
+        hora_seleccionada = random.uniform(0, 24)
+        return hora_seleccionada
+    
+    # Dependiendo del dia y la hora, la autopista (nuestra muestra) tendra una cantidad de autos distinta
+    def cantidadAutos(self, dia, hora):
+        
+        #Si es dia de semana
+        if(dia == 'Lunes' or dia == 'Martes' or dia == 'Miercoles' or dia == 'Jueves' or dia == 'Viernes'):
             
-            muestrasUno = np.random.normal(9, 3, 10000)
-            muestrasDos = np.random.normal(18, 4, 10000)
-            muestrasHoras = np.concatenate((muestrasUno, muestrasDos))
-            horaElegida = random.choice(muestrasHoras)
+            if(0 <= hora < 9 or 20 <= hora <= 24):
+                cantidadAutos = random.randint(2000, 3000)
+            elif(9 <= hora < 11):
+                cantidadAutos = random.randint(1, 800)
+            elif(11 <= hora < 20 ):
+                cantidadAutos = random.randint(800, 2000)
+            else:
+                raise ValueError("Hora no válida")
+        
+        #Si es Sabado
+        elif(dia == 'Sabado'):
             
-        elif self.diaSemana_ == 'Sabado':
+            if(0 <= hora < 12 or 22 <= hora <= 23):
+                cantidadAutos = random.randint(1, 800)
+            elif(12 <= hora < 19):
+                cantidadAutos = random.randint(2000, 3000)
+            elif(19 <= hora < 22):
+                cantidadAutos = random.randint(800, 2000)
+            else:
+                raise ValueError("Hora no válida")
             
-            muestrasUno = np.random.normal(13, 3, 10000)
-            muestrasDos = np.random.normal(20, 1, 10000)
-            muestrasHoras = np.concatenate((muestrasUno, muestrasDos))
-            horaElegida = random.choice(muestrasHoras)
+        #Si es Domingo
+        elif(dia == 'Domingo'):
             
-        elif self.diaSemana_ == 'Domingo':
-            
-            muestrasUno = np.random.normal(13, 2, 10000)
-            muestrasDos = np.random.normal(18, 3, 10000)
-            muestrasHoras = np.concatenate((muestrasUno, muestrasDos))
-            horaElegida = random.choice(muestrasHoras)
+            if(0 <= hora <= 11 or 21 <= hora <= 23):
+                cantidadAutos = random.randint(1, 800)
+            elif(12 <= hora <= 14):
+                cantidadAutos = random.randint(2000, 3000)
+            elif(15 <= hora <= 20):
+                cantidadAutos = random.randint(800, 2000)
+            else:
+                raise ValueError("Hora no válida")
             
         else:
-            raise ValueError("Día no válido")
-        return horaElegida
+            raise ValueError("Dia no válido")
+        
+        
+        return cantidadAutos
 
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -212,36 +241,73 @@ clock = pygame.time.Clock()
 
 all_sprites = pygame.sprite.Group()
 
-n = 5
-autos = []
-for _ in range(n):
+Autopista = Autopista()
+
+print(f"Dia: {Autopista.diaSemana_}")
+print(f"Hora: {Autopista.horaDelDia_}")
+print(f"Cantidad de autos: {Autopista._cantidadAutos}")
+
+for _ in range(Autopista._cantidadAutos):
+    
     posicion = 0
     color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-    Autopista = Autopista()
+    
     hora = Autopista.horaDelDia_
     dia = Autopista.diaSemana_
+    
     auto = Auto(posicion, color, hora, dia)
-    autos.append(auto)
+    
+    Autopista._autosEnTramo.append(auto)
+    
     all_sprites.add(auto)
 
 running = True
+
 while running:
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     screen.fill(WHITE)
 
-    for auto in autos:
-        auto.actualizar()
 
+    for i in range(0, len(Autopista._autosEnTramo)):
+        
+        #Si el auto es el primero -> que avance
+        if (i == 0):
+            auto.actualizar()
+
+        #Si el auto no es el primero
+        else:
+            
+            #Si el auto ya termino de recorrer el tramo -> que no avance
+            if (Autopista._autosEnTramo[i].rect.x >= SCREEN_WIDTH):
+                continue
+                
+            #Si el auto de adelante esta a menor distancia de la velocidad de mi auto, no lo actualizo
+            elif(Autopista._autosEnTramo[i-1].rect.x - Autopista._autosEnTramo[i].rect.x < Autopista._autosEnTramo[i].speed):
+                auto.actualizar()
+        
+    #Checkeo si TODOS los autos terminaron de recorrer el tramo, termino la simulacion
+    value = True
+    
+    for k in range(0, len(Autopista._autosEnTramo)):
+        if (Autopista._autosEnTramo[k].horaFin is None):
+            value = False
+        else:
+            continue
+                
+    if (value):
+        running = False
+        
     all_sprites.draw(screen)
     pygame.display.flip()
     clock.tick(60)
 
 pygame.quit()
 
-for auto in autos:
+for auto in Autopista._autosEnTramo:
     tiempo = auto.tiempoRecorrido()
     if tiempo is not None:
         tiempo = tiempo/60

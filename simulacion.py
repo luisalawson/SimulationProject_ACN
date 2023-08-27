@@ -14,13 +14,15 @@ SCREEN_HEIGHT = 200
 # Color del fondo
 WHITE = (255, 255, 255)
 
-# Genero la clase auto
+# Clase Auto
 class Auto(pygame.sprite.Sprite):
     
+    #Atributos de 
     def __init__(self, posicion, color):
         
         super().__init__()
         
+    
         self.tipoDeVehiculo_ = self.tipoDeVehiculo()
         self.personalidadConductor_ = self.personalidadConductor()
         
@@ -104,6 +106,7 @@ class Auto(pygame.sprite.Sprite):
         self.rect.x += self.speed
 
 
+# Clase Transito
 class Transito:
     
     def _init_(self):
