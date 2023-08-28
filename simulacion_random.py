@@ -212,17 +212,23 @@ clock = pygame.time.Clock()
 
 all_sprites = pygame.sprite.Group()
 
+#Iniciamos autopista vacia y agregamos n autos
 n = 5
-autos = []
+autopista = Autopista()
+
 for _ in range(n):
-    posicion = 0
+    posicion = 0+_*(SCREEN_WIDTH/n) #modificar, fue para q se vean en pantalla
     color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-    Autopista = Autopista()
-    hora = Autopista.horaDelDia_
-    dia = Autopista.diaSemana_
+    hora = autopista.horaDelDia_
+    dia = autopista.diaSemana_
     auto = Auto(posicion, color, hora, dia)
-    autos.append(auto)
+    autopista.autosEnTramo.append(auto)
     all_sprites.add(auto)
+
+
+for k in range(0, len(autopista.autosEnTramo)):
+    print(f"Auto {k+1}: {autopista.autosEnTramo[k].speed} km/minuto | {autopista.autosEnTramo[k].dia} | {autopista.autosEnTramo[k].horaInicio:.2f}")
+
 
 running = True
 while running:
@@ -232,8 +238,18 @@ while running:
 
     screen.fill(WHITE)
 
-    for auto in autos:
+    for auto in autopista.autosEnTramo:
         auto.actualizar()
+        
+    #Checkeo si TODOS los autos terminaron de recorrer el tramo, termino la simulacion
+    value = True
+    for k in range(0, len(autopista.autosEnTramo)):
+        if (autopista.autosEnTramo[k].horaFin is None):
+            value = False
+        else:
+            continue           
+    if (value):
+        running = False
 
     all_sprites.draw(screen)
     pygame.display.flip()
@@ -241,8 +257,6 @@ while running:
 
 pygame.quit()
 
-for auto in autos:
-    tiempo = auto.tiempoRecorrido()
-    if tiempo is not None:
-        tiempo = tiempo/60
-        print(f"Auto {auto.horaInicio:.2f}: Tiempo recorrido: {tiempo:.2f} minutos")
+# for auto in autopista.autosEnTramo:
+#     if auto.horaFin is not None:
+#         print(f"Auto {auto.dia}: {auto.horaInicio:.2f} - {auto.horaFin/60:.2f}")
